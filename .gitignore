@@ -5,3 +5,15 @@ example/*
 !example/input.fasta
 !example/forward.fastq
 !example/reverse.fastq
+LICENSE
+README.md
+blosum80.mat
+conda*
+evaluation/
+*.yml
+example/
+example/
+scripts/
+work/
+data/
+vg-v1.7.0
