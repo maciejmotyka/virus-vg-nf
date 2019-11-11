@@ -1,0 +1,7 @@
+*~
+.*
+!/.gitignore
+example/*
+!example/input.fasta
+!example/forward.fastq
+!example/reverse.fastq
