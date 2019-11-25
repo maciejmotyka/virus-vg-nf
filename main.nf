@@ -11,12 +11,12 @@ contigs_ch = Channel.fromPath("$params.contigs_dir/*.fasta").map { file -> tuple
 joint_ch = reads_ch.join(contigs_ch)
 
 process buildGraph {
-    echo true
     publishDir "./output$sampleId", mode: 'copy'
     conda params.virusvg_env
     input:
-    //set sampleId, file(infiles) from joint_ch
     tuple sampleId, reads, contig from joint_ch
+    output:
+    file node_abundance.txt contig_graph.final.gfa into stage1_out_ch
 
     script:
     """
@@ -26,5 +26,27 @@ process buildGraph {
     -c ${contig} \
     -vg $params.vg_path \
     -t $params.num_threads
+    """
+}
+process optimizeStrains {
+    publishDir "./output/$sampleId", mode: 'copy'
+    conda params.virusvg_env
+    input:
+    tuple m, c from stage2_params_ch
+    tuple node_abundance, contig_graph from stage1_out_ch
+    output:
+    file "*"
+
+    script:
+    """
+    SEQ_DEPTH="\$(calculate_depth.py \
+    --ref_len $params.ref_len \
+    -p1 ${reads[0]} \
+    -p2 ${reads[1]})";
+    python $params.virusvg_path/scripts/optimize_strains.py \
+    -m ${m} \
+    -c ${c} \
+    ${node_abundance} \
+    ${contig_graph}
     """
 }
