@@ -6,7 +6,6 @@ example/*
 !example/forward.fastq
 !example/reverse.fastq
 LICENSE
-README.md
 blosum80.mat
 conda*
 evaluation/
